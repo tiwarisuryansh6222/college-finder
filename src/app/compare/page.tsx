@@ -59,6 +59,7 @@ export default function ComparePage() {
     {
       title: 'Basic Information',
       rows: [
+        { label: 'College Name', getValue: (i: number) => selected[i].name },
         { label: 'Location', getValue: (i: number) => selected[i].location },
         { label: 'Type', getValue: (i: number) => selected[i].type, isBadge: true },
         { label: 'Established', getValue: (i: number) => selected[i].established.toString() },
