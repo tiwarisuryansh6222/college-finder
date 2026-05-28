@@ -37,8 +37,8 @@ export default function SavedPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Saved Colleges</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">Saved Colleges</h1>
+        <p className="text-sm text-neutral-500 mt-1">
           {saved.length > 0
             ? `${saved.length} saved college${saved.length === 1 ? '' : 's'}`
             : 'Your saved colleges will appear here'}

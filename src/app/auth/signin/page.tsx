@@ -37,19 +37,19 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-primary-50 via-white to-primary-100">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div className="bg-white rounded-[12px] shadow-xl border border-neutral-100 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-14 h-14 bg-primary-600 rounded-[12px] flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-            <p className="text-gray-500 mt-1 text-sm">Sign in to your CollegeFinder account</p>
+            <h1 className="text-2xl font-bold text-neutral-900">Welcome back</h1>
+            <p className="text-neutral-500 mt-1 text-sm">Sign in to your CollegeFinder account</p>
           </div>
 
           {/* Form */}
@@ -61,7 +61,7 @@ export default function SignInPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="email" className="block text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1.5">
                 Email address
               </label>
               <input
@@ -71,12 +71,12 @@ export default function SignInPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all"
+                className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-[8px] text-sm focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-100 transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="password" className="block text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1.5">
                 Password
               </label>
               <input
@@ -86,14 +86,14 @@ export default function SignInPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter any password"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all"
+                className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-[8px] text-sm focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-100 transition-all"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-all focus:ring-2 focus:ring-indigo-300 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-[8px] hover:bg-primary-700 transition-all focus:ring-2 focus:ring-primary-300 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -116,13 +116,13 @@ export default function SignInPage() {
           {/* Guest */}
           <button
             onClick={handleGuest}
-            className="w-full px-4 py-2.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-100 transition-all"
+            className="w-full px-4 py-2.5 bg-neutral-50 text-neutral-700 text-sm font-medium rounded-[8px] border border-neutral-200 hover:bg-neutral-100 transition-all"
           >
             Continue as Guest
           </button>
 
           {/* Helper text */}
-          <p className="text-xs text-gray-400 text-center mt-6">
+          <p className="text-xs text-neutral-400 text-center mt-6">
             Demo mode — any email and password will work
           </p>
         </div>

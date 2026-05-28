@@ -1,57 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-surface: #F8FAFC;
-  --color-border: #E2E8F0;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
+  /* Primary palette (violet/purple) */
+  --color-primary-50: #F5F3FF;
+  --color-primary-100: #EDE9FE;
+  --color-primary-200: #DDD6FE;
+  --color-primary-300: #C4B5FD;
+  --color-primary-400: #A78BFA;
+  --color-primary-500: #8B5CF6;
+  --color-primary-600: #7C3AED;
+  --color-primary-700: #6D28D9;
+  --color-primary-800: #5B21B6;
+  --color-primary-900: #4C1D95;
+
+  /* Accent palette (amber) */
+  --color-accent-400: #FBBF24;
+  --color-accent-500: #F59E0B;
+  --color-accent-600: #D97706;
+
+  /* Semantic */
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+
+  /* Neutral */
+  --color-neutral-50: #F9FAFB;
+  --color-neutral-100: #F3F4F6;
+  --color-neutral-200: #E5E7EB;
+  --color-neutral-300: #D1D5DB;
+  --color-neutral-400: #9CA3AF;
+  --color-neutral-500: #6B7280;
+  --color-neutral-700: #374151;
+  --color-neutral-900: #111827;
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+
+  /* Border radius */
+  --radius-card: 12px;
+  --radius-badge: 6px;
+  --radius-pill: 9999px;
+  --radius-input: 8px;
+  --radius-button: 8px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 12px rgba(124,58,237,0.10), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-sidebar: 2px 0 8px rgba(0,0,0,0.04);
 }
 
-/* Smooth scroll */
+/* ─── CSS Custom Properties ─────────────────────────────── */
+:root {
+  --color-primary: #7C3AED;
+  --color-primary-dark: #5B21B6;
+  --color-primary-light: #EDE9FE;
+  --color-accent: #F59E0B;
+  --color-accent-dark: #D97706;
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+  --color-border: #E5E7EB;
+  --color-border-focus: #7C3AED;
+  --color-surface: #F9FAFB;
+  --color-white: #FFFFFF;
+  --nav-height: 64px;
+  --sidebar-width: 280px;
+  --radius-card: 12px;
+  --radius-badge: 6px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 4px 12px rgba(124,58,237,0.10);
+  --transition-base: all 0.2s ease;
+}
+
+/* ─── Base ───────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--color-white);
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
-}
-
-/* Range slider thumb styles */
+/* ─── Range slider thumb ─────────────────────────────────── */
 .range-slider-thumb::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #4F46E5;
+  background: var(--color-primary);
   border: 3px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   cursor: pointer;
   pointer-events: all;
   position: relative;
@@ -62,66 +114,40 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #4F46E5;
+  background: var(--color-primary);
   border: 3px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   cursor: pointer;
   pointer-events: all;
 }
 
-/* Custom animations */
+/* ─── Animations ─────────────────────────────────────────── */
 @keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 @keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
 @keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
 }
 
 @keyframes scaleIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
-/* Line clamp utility */
+/* ─── Utilities ──────────────────────────────────────────── */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -129,13 +155,11 @@ body {
   overflow: hidden;
 }
 
-/* Checkbox styling */
 input[type="checkbox"] {
-  accent-color: #4F46E5;
+  accent-color: var(--color-primary);
 }
 
-/* Focus visible */
 *:focus-visible {
-  outline: 2px solid #4F46E5;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }

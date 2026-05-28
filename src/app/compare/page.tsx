@@ -137,16 +137,16 @@ export default function ComparePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">
             Comparing {selected.length} College{selected.length > 1 ? 's' : ''}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Side-by-side comparison of selected colleges</p>
+          <p className="text-sm text-neutral-500 mt-1">Side-by-side comparison of selected colleges</p>
         </div>
         <div className="flex gap-2">
           {selected.length < 3 && (
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-[8px] hover:bg-primary-700 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -156,7 +156,7 @@ export default function ComparePage() {
           )}
           <button
             onClick={clear}
-            className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+            className="px-4 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 bg-neutral-100 rounded-[8px] hover:bg-neutral-200 transition-all"
           >
             Clear All
           </button>
@@ -164,22 +164,22 @@ export default function ComparePage() {
       </div>
 
       {/* Comparison Table */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+      <div className="bg-white rounded-[12px] border border-neutral-200 shadow-[var(--shadow-card)] overflow-hidden overflow-x-auto">
         <table className="w-full min-w-[640px]">
           {/* College Headers */}
           <thead>
             <tr className="border-b border-gray-100">
-              <th className="w-44 p-4 bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="w-44 p-4 bg-neutral-50 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                 College
               </th>
               {selected.map((college) => (
-                <th key={college.id} className="p-4 text-center border-l border-gray-100">
+                <th key={college.id} className="p-4 text-center border-l border-neutral-100">
                   <div className="flex flex-col items-center">
-                    <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-2">
-                      <span className="text-xl font-bold text-indigo-600">{college.name.charAt(0)}</span>
+                    <div className="w-14 h-14 bg-primary-100 rounded-[12px] flex items-center justify-center mb-2">
+                      <span className="text-xl font-bold text-primary-600">{college.name.charAt(0)}</span>
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">{college.name}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{college.location}</p>
+                    <h3 className="text-sm font-semibold text-neutral-900 line-clamp-2">{college.name}</h3>
+                    <p className="text-xs text-neutral-500 mt-0.5">{college.location}</p>
                     <button
                       onClick={() => remove(college.id)}
                       className="mt-2 text-xs text-red-500 hover:text-red-600 font-medium transition-colors"
@@ -199,7 +199,7 @@ export default function ComparePage() {
                 <tr>
                   <td
                     colSpan={selected.length + 1}
-                    className="px-4 py-3 bg-indigo-50 text-xs font-bold text-indigo-700 uppercase tracking-wider"
+                    className="px-4 py-3 bg-primary-50 text-xs font-bold text-primary-700 uppercase tracking-wider"
                   >
                     {section.title}
                   </td>
@@ -214,8 +214,8 @@ export default function ComparePage() {
                     : null;
 
                   return (
-                    <tr key={row.label} className="border-b border-gray-50 hover:bg-gray-50/50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50/50">
+                    <tr key={row.label} className="border-b border-neutral-100 hover:bg-neutral-50/50">
+                      <td className="px-4 py-3 text-sm font-medium text-neutral-500 bg-neutral-50/50">
                         {row.label}
                       </td>
                       {selected.map((college, i) => {
@@ -225,7 +225,7 @@ export default function ComparePage() {
                         return (
                           <td
                             key={college.id}
-                            className={`px-4 py-3 text-center border-l border-gray-50 ${
+                            className={`px-4 py-3 text-center border-l border-neutral-100 ${
                               isHighlighted ? 'bg-emerald-50' : ''
                             }`}
                           >
