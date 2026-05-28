@@ -2,22 +2,18 @@
 
 import React from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useSaved } from '@/context/SavedContext';
 import { CollegeCard } from '@/components/CollegeCard';
 import { EmptyState } from '@/components/EmptyState';
 
 export default function SavedPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { saved } = useSaved();
 
-  // Redirect if not logged in
-  React.useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-    }
-  }, [status, router]);
+  if (status === 'unauthenticated') {
+    redirect('/auth/signin');
+  }
 
   if (status === 'loading') {
     return (
@@ -44,7 +40,7 @@ export default function SavedPage() {
         <h1 className="text-2xl font-bold text-gray-900">Saved Colleges</h1>
         <p className="text-sm text-gray-500 mt-1">
           {saved.length > 0
-            ? `You have ${saved.length} saved college${saved.length > 1 ? 's' : ''}`
+            ? `${saved.length} saved college${saved.length === 1 ? '' : 's'}`
             : 'Your saved colleges will appear here'}
         </p>
       </div>
@@ -52,7 +48,7 @@ export default function SavedPage() {
       {saved.length === 0 ? (
         <EmptyState
           title="No saved colleges yet"
-          description="Start exploring colleges and save the ones you're interested in to see them here."
+          description="Tap the heart on any college to save it for later"
           actionLabel="Explore Colleges"
           actionHref="/colleges"
           icon={

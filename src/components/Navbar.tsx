@@ -34,7 +34,7 @@ export function Navbar() {
   ];
 
   const userInitials = session?.user?.email
-    ? session.user.email.substring(0, 2).toUpperCase()
+    ? session.user.email.charAt(0).toUpperCase()
     : '';
 
   return (

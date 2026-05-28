@@ -22,10 +22,10 @@ export function SavedProvider({ children }: { children: React.ReactNode }) {
       setSaved((prev) => {
         const exists = prev.some((c) => c.id === college.id);
         if (exists) {
-          queueMicrotask(() => showToast(`${college.name} removed from saved`, 'info'));
+          queueMicrotask(() => showToast('Removed from saved', 'info'));
           return prev.filter((c) => c.id !== college.id);
         } else {
-          queueMicrotask(() => showToast(`${college.name} saved`, 'success'));
+          queueMicrotask(() => showToast('Saved to your list', 'success'));
           return [...prev, college];
         }
       });
