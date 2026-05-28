@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { College, FilterState } from '@/lib/types';
-import { colleges as allColleges } from '@/lib/data/colleges';
 import { ITEMS_PER_PAGE } from '@/lib/constants';
 
 interface UseCollegesReturn {
@@ -14,12 +13,17 @@ interface UseCollegesReturn {
   loadMore: () => void;
 }
 
-export function useColleges(filters: FilterState): UseCollegesReturn {
-  const [isLoading, setIsLoading] = useState(true);
+export function useColleges(filters: FilterState, initialColleges: College[]): UseCollegesReturn {
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const isFirstMount = useRef(true);
 
   // Reset page when filters change
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
     setPage(1);
     setIsLoading(true);
     const timer = setTimeout(() => {
@@ -37,7 +41,7 @@ export function useColleges(filters: FilterState): UseCollegesReturn {
   ]);
 
   const filtered = useMemo(() => {
-    let result = [...allColleges];
+    let result = [...initialColleges];
 
     // Search
     if (filters.search) {
@@ -95,7 +99,7 @@ export function useColleges(filters: FilterState): UseCollegesReturn {
     }
 
     return result;
-  }, [filters]);
+  }, [filters, initialColleges]);
 
   const paginatedColleges = useMemo(() => {
     return filtered.slice(0, page * ITEMS_PER_PAGE);
@@ -113,7 +117,7 @@ export function useColleges(filters: FilterState): UseCollegesReturn {
 
   return {
     colleges: paginatedColleges,
-    totalCount: allColleges.length,
+    totalCount: initialColleges.length,
     filteredCount: filtered.length,
     isLoading,
     hasMore: paginatedColleges.length < filtered.length,
