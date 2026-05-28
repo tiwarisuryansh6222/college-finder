@@ -84,8 +84,51 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
   }, [isIntersecting, hasMore, isLoading, loadMore]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="flex gap-8">
+    <>
+      {/* Hero Section */}
+      <div className="bg-[#1a1f5e] pt-16 pb-12 px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-[family-name:var(--font-heading)] font-extrabold text-white mb-4 tracking-tight">
+            Find Your Perfect College
+          </h1>
+          <p className="text-lg md:text-xl text-indigo-100 mb-8 font-medium">
+            Explore 30+ colleges across India
+          </p>
+          
+          <div className="relative flex items-center bg-white rounded-xl shadow-lg p-1.5 focus-within:ring-4 focus-within:ring-indigo-500/30 transition-all">
+            <div className="flex-1 flex items-center px-4">
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search colleges, courses, exams, or locations..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="w-full pl-3 pr-4 py-3 bg-transparent text-gray-900 placeholder-gray-500 text-base focus:outline-none font-medium"
+              />
+            </div>
+            <button className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-lg transition-colors shrink-0 shadow-sm">
+              Search
+            </button>
+          </div>
+          
+          <div className="mt-6 flex flex-wrap justify-center items-center gap-2 md:gap-3 text-sm text-indigo-200/80 font-semibold tracking-wide uppercase">
+            <span>30 Colleges</span>
+            <span className="w-1 h-1 bg-indigo-300 rounded-full"></span>
+            <span>15 States</span>
+            <span className="w-1 h-1 bg-indigo-300 rounded-full"></span>
+            <span>Engineering</span>
+            <span className="w-1 h-1 bg-indigo-300 rounded-full"></span>
+            <span>Management</span>
+            <span className="w-1 h-1 bg-indigo-300 rounded-full"></span>
+            <span>Medical</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8">
         {/* Filter Sidebar */}
         <FilterSidebar
           filters={filters}
@@ -97,12 +140,12 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
 
         {/* Main Content */}
         <div className="flex-1 min-w-0">
-          {/* Search + Sort Header */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          {/* Sort Header */}
+          <div className="flex flex-row items-center justify-between gap-3 mb-6">
             {/* Mobile filter toggle */}
             <button
               onClick={() => setFilterDrawerOpen(true)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -110,32 +153,21 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
               Filters
             </button>
 
-            {/* Search */}
-            <div className="relative flex-1">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search colleges by name, location, type, courses..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all"
-              />
-            </div>
-
             {/* Sort */}
-            <select
-              value={filters.sort}
-              onChange={(e) => handleFilterChange({ sort: e.target.value as SortOption })}
-              className="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 cursor-pointer"
-            >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center gap-3 ml-auto">
+              <span className="text-sm font-medium text-gray-500 hidden sm:inline-block">Sort by:</span>
+              <select
+                value={filters.sort}
+                onChange={(e) => handleFilterChange({ sort: e.target.value as SortOption })}
+                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 cursor-pointer shadow-sm"
+              >
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Result Count */}
@@ -182,5 +214,6 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -25,13 +25,14 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
     onFilterChange({ [key]: updated } as Partial<FilterState>);
   };
 
-  const hasActiveFilters =
-    filters.locations.length > 0 ||
-    filters.types.length > 0 ||
-    filters.feesRange[0] !== FEES_RANGE[0] ||
-    filters.feesRange[1] !== FEES_RANGE[1] ||
-    filters.rating > 0 ||
-    filters.naacGrades.length > 0;
+  const activeCount = 
+    filters.locations.length + 
+    filters.types.length + 
+    filters.naacGrades.length + 
+    (filters.feesRange[0] !== FEES_RANGE[0] || filters.feesRange[1] !== FEES_RANGE[1] ? 1 : 0) + 
+    (filters.rating > 0 ? 1 : 0);
+
+  const hasActiveFilters = activeCount > 0;
 
   const sidebarContent = (
     <div className="space-y-6">
@@ -46,8 +47,11 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
       )}
 
       {/* Location */}
-      <div>
-        <h4 className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-3">Location</h4>
+      <details open className="group">
+        <summary className="list-none flex items-center justify-between cursor-pointer font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">
+          Location
+          <svg className="w-4 h-4 text-gray-400 group-open:-rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </summary>
         <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
           {STATES.map((state) => (
             <label
@@ -60,15 +64,20 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
                 onChange={() => toggleArrayFilter(filters.locations, state, 'locations')}
                 className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
-              <span className="text-sm text-gray-700">{state}</span>
+              <span className="text-sm text-gray-700 font-medium">{state}</span>
             </label>
           ))}
         </div>
-      </div>
+      </details>
+
+      <hr className="border-gray-100" />
 
       {/* College Type */}
-      <div>
-        <h4 className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-3">College Type</h4>
+      <details open className="group">
+        <summary className="list-none flex items-center justify-between cursor-pointer font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">
+          College Type
+          <svg className="w-4 h-4 text-gray-400 group-open:-rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </summary>
         <div className="space-y-1.5">
           {COLLEGE_TYPES.map((type) => (
             <label
@@ -81,26 +90,39 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
                 onChange={() => toggleArrayFilter<CollegeType>(filters.types, type, 'types')}
                 className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
-              <span className="text-sm text-gray-700">{type}</span>
+              <span className="text-sm text-gray-700 font-medium">{type}</span>
             </label>
           ))}
         </div>
-      </div>
+      </details>
+
+      <hr className="border-gray-100" />
 
       {/* Fees Range */}
-      <div>
-        <h4 className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-3">Fees Range</h4>
+      <details open className="group">
+        <summary className="list-none flex items-center justify-between cursor-pointer font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">
+          Fees Range
+          <svg className="w-4 h-4 text-gray-400 group-open:-rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </summary>
+        <div className="mb-2 text-sm font-semibold text-indigo-600 text-center bg-indigo-50 py-1 rounded-md">
+          ₹{filters.feesRange[0] / 100000}L - ₹{filters.feesRange[1] / 100000}L
+        </div>
         <RangeSlider
           min={FEES_RANGE[0]}
           max={FEES_RANGE[1]}
           value={filters.feesRange}
           onChange={(value) => onFilterChange({ feesRange: value })}
         />
-      </div>
+      </details>
+
+      <hr className="border-gray-100" />
 
       {/* Rating */}
-      <div>
-        <h4 className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-3">Rating</h4>
+      <details open className="group">
+        <summary className="list-none flex items-center justify-between cursor-pointer font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">
+          Rating
+          <svg className="w-4 h-4 text-gray-400 group-open:-rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </summary>
         <div className="flex flex-wrap gap-2">
           {RATING_FILTERS.map((r) => (
             <button
@@ -119,11 +141,16 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
             </button>
           ))}
         </div>
-      </div>
+      </details>
+
+      <hr className="border-gray-100" />
 
       {/* NAAC Grade */}
-      <div>
-        <h4 className="text-xs uppercase tracking-wider font-semibold text-gray-500 mb-3">NAAC Grade</h4>
+      <details open className="group">
+        <summary className="list-none flex items-center justify-between cursor-pointer font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">
+          NAAC Grade
+          <svg className="w-4 h-4 text-gray-400 group-open:-rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </summary>
         <div className="flex flex-wrap gap-2">
           {NAAC_GRADES.map((grade) => (
             <button
@@ -139,7 +166,15 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
             </button>
           ))}
         </div>
-      </div>
+      </details>
+
+      {/* Apply Filters Button */}
+      <button
+        onClick={onClose}
+        className="w-full text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 py-3 rounded-lg transition-colors mt-6 shadow-sm"
+      >
+        Apply Filters
+      </button>
     </div>
   );
 
@@ -148,7 +183,16 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
       {/* Desktop sidebar */}
       <aside className="hidden lg:block w-[280px] flex-shrink-0">
         <div className="sticky top-20 bg-white rounded-xl border border-gray-100 shadow-sm p-5 max-h-[calc(100vh-6rem)] overflow-y-auto">
-          <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Filters</h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+              Filters
+              {activeCount > 0 && (
+                <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                  {activeCount}
+                </span>
+              )}
+            </h3>
+          </div>
           {sidebarContent}
         </div>
       </aside>
@@ -163,7 +207,14 @@ export function FilterSidebar({ filters, onFilterChange, onClearAll, isOpen, onC
           <div className="fixed top-0 left-0 w-[300px] h-full bg-white z-50 shadow-xl lg:hidden animate-[slideInLeft_0.2s_ease-out] overflow-y-auto">
             <div className="p-5">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Filters</h3>
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                  Filters
+                  {activeCount > 0 && (
+                    <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                      {activeCount}
+                    </span>
+                  )}
+                </h3>
                 <button
                   onClick={onClose}
                   className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
