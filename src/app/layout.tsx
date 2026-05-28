@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ToastProvider } from "@/context/ToastContext";
 import { CompareProvider } from "@/context/CompareContext";
 import { SavedProvider } from "@/context/SavedContext";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { CompareBar } from "@/components/CompareBar";
 import { ToastContainer } from "@/components/Toast";
 
@@ -20,12 +21,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-slate-50">
+      <body className="min-h-full flex flex-col bg-white">
         <AuthProvider>
           <ToastProvider>
             <CompareProvider>
               <SavedProvider>
-                <Navbar />
+                <Suspense fallback={<div className="h-28 bg-white border-b border-neutral-200" />}>
+                  <Navbar />
+                </Suspense>
                 <main className="flex-1">{children}</main>
                 <CompareBar />
                 <ToastContainer />

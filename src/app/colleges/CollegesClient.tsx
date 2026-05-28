@@ -11,6 +11,8 @@ import { CollegeCard } from '@/components/CollegeCard';
 import { CollegeCardSkeleton } from '@/components/CollegeCardSkeleton';
 import { FilterSidebar } from '@/components/filters/FilterSidebar';
 import { EmptyState } from '@/components/EmptyState';
+import { HeroSection } from '@/components/layout/HeroSection';
+import { StreamExplorer } from '@/components/colleges/StreamExplorer';
 
 export default function CollegesClient({ initialColleges }: { initialColleges: College[] }) {
   const router = useRouter();
@@ -85,47 +87,8 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
 
   return (
     <>
-      {/* Hero Section */}
-      <div className="bg-[#1a1f5e] pt-16 pb-12 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-display font-extrabold text-white mb-4 tracking-tight">
-            Find Your Perfect College
-          </h1>
-          <p className="text-lg md:text-xl text-primary-100 mb-8 font-medium">
-            Explore 30+ colleges across India
-          </p>
-          
-          <div className="relative flex items-center bg-white rounded-[12px] shadow-lg p-1.5 focus-within:ring-4 focus-within:ring-primary-500/30 transition-all">
-            <div className="flex-1 flex items-center px-4">
-              <svg className="w-5 h-5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search colleges, courses, exams, or locations..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full pl-3 pr-4 py-3 bg-transparent text-neutral-900 placeholder-neutral-400 text-base focus:outline-none font-medium"
-              />
-            </div>
-            <button className="bg-accent-500 hover:bg-accent-600 text-neutral-900 font-bold px-8 py-3 rounded-[8px] transition-colors shrink-0 shadow-sm">
-              Search
-            </button>
-          </div>
-          
-          <div className="mt-6 flex flex-wrap justify-center items-center gap-2 md:gap-3 text-sm text-primary-200/80 font-semibold tracking-wide uppercase">
-            <span>30 Colleges</span>
-            <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-            <span>15 States</span>
-            <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-            <span>Engineering</span>
-            <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-            <span>Management</span>
-            <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-            <span>Medical</span>
-          </div>
-        </div>
-      </div>
+      <HeroSection />
+      <StreamExplorer />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
@@ -202,8 +165,8 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
               {/* Infinite scroll sentinel */}
               {hasMore && (
                 <div ref={sentinelRef} className="flex justify-center py-8">
-                  <div className="flex items-center gap-3 text-gray-400">
-                    <div className="w-5 h-5 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                  <div className="flex items-center gap-3 text-neutral-400">
+                    <div className="w-5 h-5 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
                     <span className="text-sm">Loading more colleges...</span>
                   </div>
                 </div>
