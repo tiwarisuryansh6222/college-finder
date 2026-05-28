@@ -18,45 +18,59 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   // Parse URL params into filter state
-  const getFiltersFromParams = useCallback((): FilterState => {
+  const getFiltersFromParams = (): FilterState => {
     return {
       search: searchParams.get('q') || '',
-      locations: searchParams.get('locations')?.split(',').filter(Boolean) || [],
-      types: (searchParams.get('types')?.split(',').filter(Boolean) || []) as CollegeType[],
+      locations: searchParams.get('state')?.split(',').filter(Boolean) || [],
+      types: (searchParams.get('type')?.split(',').filter(Boolean) || []) as CollegeType[],
       feesRange: [
-        Number(searchParams.get('feesMin')) || FEES_RANGE[0],
-        Number(searchParams.get('feesMax')) || FEES_RANGE[1],
+        searchParams.has('minFees') ? Number(searchParams.get('minFees')) : FEES_RANGE[0],
+        searchParams.has('maxFees') ? Number(searchParams.get('maxFees')) : FEES_RANGE[1],
       ],
-      rating: Number(searchParams.get('rating')) || 0,
+      rating: Number(searchParams.get('minRating')) || 0,
       naacGrades: (searchParams.get('naac')?.split(',').filter(Boolean) || []) as NaacGrade[],
       sort: (searchParams.get('sort') as SortOption) || 'relevance',
     };
-  }, [searchParams]);
+  };
 
-  const [filters, setFilters] = useState<FilterState>(getFiltersFromParams);
+  const filters = getFiltersFromParams();
+
   const [searchInput, setSearchInput] = useState(filters.search);
   const debouncedSearch = useDebounce(searchInput, 300);
 
-  // Sync debounced search
-  useEffect(() => {
-    setFilters((prev) => ({ ...prev, search: debouncedSearch }));
-  }, [debouncedSearch]);
-
-  // Sync filters to URL
-  useEffect(() => {
+  const handleFilterChange = useCallback((partial: Partial<FilterState>) => {
+    const newFilters = { ...filters, ...partial };
     const params = new URLSearchParams();
-    if (filters.search) params.set('q', filters.search);
-    if (filters.locations.length) params.set('locations', filters.locations.join(','));
-    if (filters.types.length) params.set('types', filters.types.join(','));
-    if (filters.feesRange[0] !== FEES_RANGE[0]) params.set('feesMin', filters.feesRange[0].toString());
-    if (filters.feesRange[1] !== FEES_RANGE[1]) params.set('feesMax', filters.feesRange[1].toString());
-    if (filters.rating) params.set('rating', filters.rating.toString());
-    if (filters.naacGrades.length) params.set('naac', filters.naacGrades.join(','));
-    if (filters.sort !== 'relevance') params.set('sort', filters.sort);
+    
+    if (newFilters.search) params.set('q', newFilters.search);
+    if (newFilters.locations.length) params.set('state', newFilters.locations.join(','));
+    if (newFilters.types.length) params.set('type', newFilters.types.join(','));
+    if (newFilters.feesRange[0] !== FEES_RANGE[0]) params.set('minFees', newFilters.feesRange[0].toString());
+    if (newFilters.feesRange[1] !== FEES_RANGE[1]) params.set('maxFees', newFilters.feesRange[1].toString());
+    if (newFilters.rating) params.set('minRating', newFilters.rating.toString());
+    if (newFilters.naacGrades.length) params.set('naac', newFilters.naacGrades.join(','));
+    if (newFilters.sort !== 'relevance') params.set('sort', newFilters.sort);
 
     const paramString = params.toString();
     router.replace(`/colleges${paramString ? `?${paramString}` : ''}`, { scroll: false });
   }, [filters, router]);
+
+  // Sync debounced search to URL
+  useEffect(() => {
+    if (debouncedSearch !== filters.search) {
+      handleFilterChange({ search: debouncedSearch });
+    }
+  }, [debouncedSearch, filters.search, handleFilterChange]);
+
+  // Sync URL search to local input (e.g. on back button)
+  useEffect(() => {
+    setSearchInput(filters.search);
+  }, [filters.search]);
+
+  const handleClearAll = () => {
+    setSearchInput('');
+    router.replace('/colleges', { scroll: false });
+  };
 
   const { colleges, totalCount, filteredCount, isLoading, hasMore, loadMore } = useColleges(filters, initialColleges);
 
@@ -68,24 +82,6 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
       loadMore();
     }
   }, [isIntersecting, hasMore, isLoading, loadMore]);
-
-  const handleFilterChange = (partial: Partial<FilterState>) => {
-    setFilters((prev) => ({ ...prev, ...partial }));
-  };
-
-  const handleClearAll = () => {
-    const defaultFilters: FilterState = {
-      search: '',
-      locations: [],
-      types: [],
-      feesRange: FEES_RANGE,
-      rating: 0,
-      naacGrades: [],
-      sort: 'relevance',
-    };
-    setFilters(defaultFilters);
-    setSearchInput('');
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
