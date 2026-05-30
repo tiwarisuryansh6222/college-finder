@@ -35,9 +35,11 @@ export function useColleges(filters: FilterState, initialColleges: College[]): U
     filters.sort,
     JSON.stringify(filters.locations),
     JSON.stringify(filters.types),
+    JSON.stringify(filters.ownerships),
     JSON.stringify(filters.feesRange),
     filters.rating,
     JSON.stringify(filters.naacGrades),
+    JSON.stringify(filters.nirfRanks),
   ]);
 
   const filtered = useMemo(() => {
@@ -60,9 +62,18 @@ export function useColleges(filters: FilterState, initialColleges: College[]): U
       result = result.filter((c) => filters.locations.includes(c.state));
     }
 
-    // Type filter
+    // Type filter (Stream)
     if (filters.types.length > 0) {
       result = result.filter((c) => filters.types.includes(c.type));
+    }
+
+    // Ownership filter (College Type)
+    if (filters.ownerships && filters.ownerships.length > 0) {
+      result = result.filter((c) => {
+        const isGov = c.name.includes('Indian Institute') || c.name.includes('National') || c.name.includes('All India') || c.name.includes('University') || c.name.includes('Jadavpur') || c.name.includes('Armed Forces');
+        const cOwnership = isGov ? 'Government' : 'Private';
+        return filters.ownerships.includes(cOwnership);
+      });
     }
 
     // Fees range filter
@@ -78,6 +89,22 @@ export function useColleges(filters: FilterState, initialColleges: College[]): U
     // NAAC grade filter
     if (filters.naacGrades.length > 0) {
       result = result.filter((c) => filters.naacGrades.includes(c.naacGrade));
+    }
+
+    // NIRF rank filter
+    if (filters.nirfRanks && filters.nirfRanks.length > 0) {
+      result = result.filter((c) => {
+        const rank = c.nirfRank || 999999;
+        const isUnranked = rank > 100 || rank === 0;
+        return filters.nirfRanks.some((r) => {
+          if (r === 'top10') return rank > 0 && rank <= 10;
+          if (r === 'top25') return rank > 0 && rank <= 25;
+          if (r === 'top50') return rank > 0 && rank <= 50;
+          if (r === 'top100') return rank > 0 && rank <= 100;
+          if (r === 'unranked') return isUnranked;
+          return false;
+        });
+      });
     }
 
     // Sorting

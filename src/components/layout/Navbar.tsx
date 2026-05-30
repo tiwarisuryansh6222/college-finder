@@ -4,6 +4,8 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { useCompare } from '@/context/CompareContext';
+import { useSaved } from '@/context/SavedContext';
 
 /* ─── SVG icon helpers ──────────────────────────────────── */
 function IconGraduationCap({ className }: { className?: string }) {
@@ -69,6 +71,8 @@ export function Navbar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const { selected } = useCompare();
+  const { saved } = useSaved();
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -128,6 +132,7 @@ export function Navbar() {
             </div>
             <input
               type="text"
+              suppressHydrationWarning
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search colleges, courses, exams & more"
@@ -135,6 +140,7 @@ export function Navbar() {
             />
             <button
               type="submit"
+              suppressHydrationWarning
               className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 text-sm font-medium rounded-r-full transition-colors shrink-0 self-stretch flex items-center"
             >
               Search
@@ -239,56 +245,105 @@ export function Navbar() {
               <input
                 autoFocus
                 type="text"
+                suppressHydrationWarning
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search colleges, courses..."
                 className="flex-1 py-2 px-2 text-sm bg-transparent focus:outline-none"
               />
             </div>
-            <button type="submit" className="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+            <button type="submit" suppressHydrationWarning className="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">
               Go
             </button>
           </form>
         )}
       </div>
 
-      {/* ── TIER 2 — Stream tabs ── */}
-      <div className="bg-white border-b border-neutral-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          {/* Scrollable tabs */}
-          <div
-            className="flex items-center overflow-x-auto hide-scrollbar"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {STREAM_TABS.map((tab) => {
-              const isActive = activeStream === tab.value;
+      {/* ── TIER 2 — Main Navigation ── */}
+      <div className="bg-white border-b border-neutral-200 shadow-sm relative z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-12">
+          {/* LEFT: Main Links */}
+          <div className="flex items-center gap-8 h-full">
+            {[
+              { href: '/colleges', label: 'Colleges' },
+              { href: '/courses', label: 'Courses' },
+              { href: '/careers', label: 'Career Paths' },
+            ].map((link) => {
+              const isActive = pathname === link.href || (link.href === '/colleges' && pathname?.startsWith('/colleges/'));
               return (
-                <button
-                  key={tab.value}
-                  onClick={() => handleStreamClick(tab.value)}
-                  className={`px-5 py-3 text-sm font-medium whitespace-nowrap transition-all border-b-2 shrink-0 ${
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium h-full flex items-center transition-colors border-b-2 ${
                     isActive
-                      ? 'text-primary-600 border-primary-600 font-semibold bg-primary-50'
+                      ? 'text-primary-600 border-primary-600'
                       : 'text-neutral-500 border-transparent hover:text-primary-600'
                   }`}
                 >
-                  {tab.label}
-                </button>
+                  {link.label}
+                </Link>
               );
             })}
           </div>
 
-          {/* Desktop quick links */}
-          <div className="hidden md:flex items-center gap-4 shrink-0 ml-4">
-            <Link href="/compare" className="text-xs text-neutral-400 hover:text-primary-600 transition-colors whitespace-nowrap">
-              Compare Colleges
+          {/* RIGHT: Compare & Saved */}
+          <div className="flex items-center gap-6 h-full">
+            <Link
+              href="/compare"
+              className="text-sm font-medium text-neutral-500 hover:text-primary-600 transition-colors flex items-center relative"
+            >
+              Compare
+              {selected.length > 0 && (
+                <span className="absolute -top-2 -right-3 bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1">
+                  {selected.length}
+                </span>
+              )}
             </Link>
-            <Link href="/colleges" className="text-xs text-neutral-400 hover:text-primary-600 transition-colors whitespace-nowrap">
-              College Reviews
+            <Link
+              href="/saved"
+              className="text-sm font-medium text-neutral-500 hover:text-primary-600 transition-colors flex items-center relative"
+            >
+              Saved
+              {saved.length > 0 && (
+                <span className="absolute -top-2 -right-3 bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1">
+                  {saved.length}
+                </span>
+              )}
             </Link>
           </div>
         </div>
       </div>
+
+      {/* ── TIER 3 — Stream tabs (Only on Colleges) ── */}
+      {isOnColleges && (
+        <div className="bg-neutral-50 border-b border-neutral-200 relative z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            {/* Scrollable tabs */}
+            <div
+              className="flex items-center overflow-x-auto hide-scrollbar"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {STREAM_TABS.map((tab) => {
+                const isActive = activeStream === tab.value;
+                return (
+                  <button
+                    key={tab.value}
+                    suppressHydrationWarning
+                    onClick={() => handleStreamClick(tab.value)}
+                    className={`px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-all border-b-2 shrink-0 ${
+                      isActive
+                        ? 'text-primary-700 border-primary-600 font-semibold bg-white shadow-[0_-2px_0_var(--color-primary-600)_inset]'
+                        : 'text-neutral-500 border-transparent hover:text-primary-600 hover:bg-white/50'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Mobile slide-out drawer ── */}
       {mobileMenuOpen && (

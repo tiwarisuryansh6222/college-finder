@@ -3,14 +3,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FilterState, SortOption, CollegeType, NaacGrade, College } from '@/lib/types';
-import { FEES_RANGE, SORT_OPTIONS } from '@/lib/constants';
+import { FEES_RANGE } from '@/lib/constants';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useColleges } from '@/hooks/useColleges';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { CollegeCard } from '@/components/CollegeCard';
-import { CollegeCardSkeleton } from '@/components/CollegeCardSkeleton';
-import { FilterSidebar } from '@/components/filters/FilterSidebar';
-import { EmptyState } from '@/components/EmptyState';
+import { CollegeFilters } from '@/components/colleges/CollegeFilters';
+import { ListingToolbar } from '@/components/colleges/ListingToolbar';
+import { CollegeList } from '@/components/colleges/CollegeList';
 import { HeroSection } from '@/components/layout/HeroSection';
 import { StreamExplorer } from '@/components/colleges/StreamExplorer';
 
@@ -19,18 +17,20 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
   const searchParams = useSearchParams();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
-  // Parse URL params into filter state
+  // ── Parse URL params into FilterState (for useColleges hook) ────────────
   const getFiltersFromParams = (): FilterState => {
     return {
       search: searchParams.get('q') || '',
       locations: searchParams.get('state')?.split(',').filter(Boolean) || [],
-      types: (searchParams.get('type')?.split(',').filter(Boolean) || []) as CollegeType[],
+      types: (searchParams.get('stream')?.split(',').filter(Boolean) || []) as CollegeType[],
+      ownerships: searchParams.get('type')?.split(',').filter(Boolean) || [],
       feesRange: [
         searchParams.has('minFees') ? Number(searchParams.get('minFees')) : FEES_RANGE[0],
         searchParams.has('maxFees') ? Number(searchParams.get('maxFees')) : FEES_RANGE[1],
       ],
-      rating: Number(searchParams.get('minRating')) || 0,
+      rating: searchParams.has('rating') ? Number(searchParams.get('rating')) : 0,
       naacGrades: (searchParams.get('naac')?.split(',').filter(Boolean) || []) as NaacGrade[],
+      nirfRanks: searchParams.get('nirf')?.split(',').filter(Boolean) || [],
       sort: (searchParams.get('sort') as SortOption) || 'relevance',
     };
   };
@@ -40,22 +40,27 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
   const [searchInput, setSearchInput] = useState(filters.search);
   const debouncedSearch = useDebounce(searchInput, 300);
 
-  const handleFilterChange = useCallback((partial: Partial<FilterState>) => {
-    const newFilters = { ...filters, ...partial };
-    const params = new URLSearchParams();
-    
-    if (newFilters.search) params.set('q', newFilters.search);
-    if (newFilters.locations.length) params.set('state', newFilters.locations.join(','));
-    if (newFilters.types.length) params.set('type', newFilters.types.join(','));
-    if (newFilters.feesRange[0] !== FEES_RANGE[0]) params.set('minFees', newFilters.feesRange[0].toString());
-    if (newFilters.feesRange[1] !== FEES_RANGE[1]) params.set('maxFees', newFilters.feesRange[1].toString());
-    if (newFilters.rating) params.set('minRating', newFilters.rating.toString());
-    if (newFilters.naacGrades.length) params.set('naac', newFilters.naacGrades.join(','));
-    if (newFilters.sort !== 'relevance') params.set('sort', newFilters.sort);
+  const handleFilterChange = useCallback(
+    (partial: Partial<FilterState>) => {
+      const newFilters = { ...filters, ...partial };
+      const params = new URLSearchParams();
 
-    const paramString = params.toString();
-    router.replace(`/colleges${paramString ? `?${paramString}` : ''}`, { scroll: false });
-  }, [filters, router]);
+      if (newFilters.search) params.set('q', newFilters.search);
+      if (newFilters.locations.length) params.set('state', newFilters.locations.join(','));
+      if (newFilters.types.length) params.set('stream', newFilters.types.join(','));
+      if (newFilters.ownerships.length) params.set('type', newFilters.ownerships.join(','));
+      if (newFilters.feesRange[0] !== FEES_RANGE[0]) params.set('minFees', newFilters.feesRange[0].toString());
+      if (newFilters.feesRange[1] !== FEES_RANGE[1]) params.set('maxFees', newFilters.feesRange[1].toString());
+      if (newFilters.rating) params.set('rating', newFilters.rating.toString());
+      if (newFilters.naacGrades.length) params.set('naac', newFilters.naacGrades.join(','));
+      if (newFilters.nirfRanks.length) params.set('nirf', newFilters.nirfRanks.join(','));
+      if (newFilters.sort !== 'relevance') params.set('sort', newFilters.sort);
+
+      const paramString = params.toString();
+      router.replace(`/colleges${paramString ? `?${paramString}` : ''}`, { scroll: false });
+    },
+    [filters, router]
+  );
 
   // Sync debounced search to URL
   useEffect(() => {
@@ -64,7 +69,7 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
     }
   }, [debouncedSearch, filters.search, handleFilterChange]);
 
-  // Sync URL search to local input (e.g. on back button)
+  // Sync URL search param to local search input on back/forward navigation
   useEffect(() => {
     setSearchInput(filters.search);
   }, [filters.search]);
@@ -74,108 +79,53 @@ export default function CollegesClient({ initialColleges }: { initialColleges: C
     router.replace('/colleges', { scroll: false });
   };
 
-  const { colleges, totalCount, filteredCount, isLoading, hasMore, loadMore } = useColleges(filters, initialColleges);
-
-  // Infinite scroll
-  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver();
-
-  useEffect(() => {
-    if (isIntersecting && hasMore && !isLoading) {
-      loadMore();
-    }
-  }, [isIntersecting, hasMore, isLoading, loadMore]);
+  const { colleges, filteredCount, isLoading, hasMore, loadMore } = useColleges(filters, initialColleges);
 
   return (
     <>
       <HeroSection />
       <StreamExplorer />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-        {/* Filter Sidebar */}
-        <FilterSidebar
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onClearAll={handleClearAll}
+      <div className="max-w-7xl mx-auto px-4 py-6 flex gap-6">
+
+        {/* ── LEFT: 280px sticky sidebar ────────────────────────────────── */}
+        <CollegeFilters
           isOpen={filterDrawerOpen}
           onClose={() => setFilterDrawerOpen(false)}
         />
 
-        {/* Main Content */}
+        {/* ── RIGHT: toolbar + list ─────────────────────────────────────── */}
         <div className="flex-1 min-w-0">
-          <div className="flex flex-row items-center justify-between gap-3 mb-6">
-            {/* Mobile filter toggle */}
-            <button
-              onClick={() => setFilterDrawerOpen(true)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 rounded-[8px] text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors shadow-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              Filters
-            </button>
 
-            {/* Sort */}
-            <div className="flex items-center gap-3 ml-auto">
-              <span className="text-sm font-medium text-neutral-500 hidden sm:inline-block">Sort by:</span>
-              <select
-                value={filters.sort}
-                onChange={(e) => handleFilterChange({ sort: e.target.value as SortOption })}
-                className="px-4 py-2 bg-white border border-neutral-200 rounded-[8px] text-sm font-semibold text-neutral-700 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-100 cursor-pointer shadow-sm"
-              >
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          {/* Mobile filter button */}
+          <button
+            type="button"
+            onClick={() => setFilterDrawerOpen(true)}
+            className="lg:hidden flex items-center gap-2 px-4 py-2 mb-4 bg-white border border-neutral-200 rounded-lg text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors shadow-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            Filters
+          </button>
 
-          {/* Result Count */}
-          <div className="mb-4">
-            <p className="text-sm text-neutral-500">
-              Showing <span className="font-semibold text-neutral-700">{colleges.length}</span> of{' '}
-              <span className="font-semibold text-neutral-700">{filteredCount}</span> colleges
-            </p>
-          </div>
+          {/* Toolbar: result count + active pills + sort */}
+          <ListingToolbar
+            totalShowing={colleges.length}
+            totalCount={initialColleges.length}
+            filteredCount={filteredCount}
+          />
 
-          {/* Grid */}
-          {isLoading && colleges.length === 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <CollegeCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : colleges.length === 0 ? (
-            <EmptyState
-              title="No colleges found"
-              description="Try adjusting your filters or search to find what you're looking for."
-              actionLabel="Clear Filters"
-              onAction={handleClearAll}
-            />
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {colleges.map((college) => (
-                  <CollegeCard key={college.id} college={college} />
-                ))}
-              </div>
-
-              {/* Infinite scroll sentinel */}
-              {hasMore && (
-                <div ref={sentinelRef} className="flex justify-center py-8">
-                  <div className="flex items-center gap-3 text-neutral-400">
-                    <div className="w-5 h-5 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-                    <span className="text-sm">Loading more colleges...</span>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+          {/* College list: vertical stack of horizontal cards with infinite scroll */}
+          <CollegeList
+            colleges={colleges}
+            isLoading={isLoading}
+            hasMore={hasMore}
+            onLoadMore={loadMore}
+            onClearAll={handleClearAll}
+          />
         </div>
       </div>
-    </div>
     </>
   );
 }

@@ -7,7 +7,10 @@ import { CompareProvider } from "@/context/CompareContext";
 import { SavedProvider } from "@/context/SavedContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { CompareBar } from "@/components/CompareBar";
+import { BodyPadding } from "@/components/BodyPadding";
 import { ToastContainer } from "@/components/Toast";
+import { Footer } from "@/components/layout/Footer";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "CollegeFinder - Discover Your Perfect College",
@@ -29,8 +32,11 @@ export default function RootLayout({
                 <Suspense fallback={<div className="h-28 bg-white border-b border-neutral-200" />}>
                   <Navbar />
                 </Suspense>
-                <main className="flex-1">{children}</main>
+                <main className="flex-1 flex flex-col animate-fadeIn">{children}</main>
+                <Footer />
                 <CompareBar />
+                <BodyPadding />
+                <ScrollToTop />
                 <ToastContainer />
               </SavedProvider>
             </CompareProvider>

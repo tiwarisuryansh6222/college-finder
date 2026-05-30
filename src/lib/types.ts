@@ -47,7 +47,9 @@ export interface FilterState {
   locations: string[];
   types: CollegeType[];
   feesRange: [number, number];
+  ownerships: string[];
   rating: number;
   naacGrades: NaacGrade[];
+  nirfRanks: string[];
   sort: SortOption;
 }

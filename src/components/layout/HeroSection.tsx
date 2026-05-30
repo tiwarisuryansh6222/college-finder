@@ -20,11 +20,11 @@ function IconMapPin({ className }: { className?: string }) {
 }
 
 const QUICK_LINKS = [
-  { label: 'Top Engineering Colleges', q: 'Engineering', stream: 'Engineering' },
-  { label: 'Top MBA Colleges', q: 'MBA', stream: 'Management' },
-  { label: 'NEET Medical Colleges', q: 'Medical', stream: 'Medical' },
-  { label: 'Top IITs', q: 'IIT', stream: 'Engineering' },
-  { label: 'Top NITs', q: 'NIT', stream: 'Engineering' },
+  { label: 'Top Engineering Colleges', q: '', stream: 'Engineering' },
+  { label: 'Top MBA Colleges', q: '', stream: 'Management' },
+  { label: 'NEET Medical Colleges', q: '', stream: 'Medical' },
+  { label: 'Top IITs', q: 'Institute of Technology', stream: 'Engineering' },
+  { label: 'Top NITs', q: 'National Institute of Technology', stream: 'Engineering' },
 ];
 
 export function HeroSection() {
@@ -83,6 +83,7 @@ export function HeroSection() {
             {/* Search input */}
             <input
               type="text"
+              suppressHydrationWarning
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search colleges, courses, exams..."
@@ -92,6 +93,7 @@ export function HeroSection() {
             {/* CTA button */}
             <button
               type="submit"
+              suppressHydrationWarning
               className="flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-neutral-900 font-semibold px-7 py-4 text-sm transition-all shrink-0 self-stretch"
             >
               <IconSearch className="w-4 h-4" />
@@ -105,6 +107,7 @@ export function HeroSection() {
             {QUICK_LINKS.map((link) => (
               <button
                 key={link.label}
+                suppressHydrationWarning
                 onClick={() => handleQuickLink(link.q, link.stream)}
                 className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1 rounded-full cursor-pointer transition-colors"
               >
